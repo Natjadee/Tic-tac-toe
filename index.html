@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe Game</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+      margin-top: 20px;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      font-size: 2em;
+      text-align: center;
+      line-height: 100px;
+      background-color: #f1f1f1;
+      border: 1px solid #333;
+      cursor: pointer;
+    }
+    .highlight {
+      background-color: #4CAF50;
+      color: white;
+    }
+    #scoreboard, #resultboard {
+      text-align: center;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="text-align: center;">Tic-Tac-Toe Game</h1>
+  <div id="scoreboard">
+    Score: <span id="score">0</span>
+  </div>
+  <div class="board" id="board">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+
+  <div id="resultboard">
+    Wins: <span id="wins">0</span> |
+    Draws: <span id="draws">0</span> |
+    Losses: <span id="losses">0</span>
+  </div>
+
+  <script>
+    const PLAYER = 'X';
+    const BOT = 'O';
+    let board = Array(9).fill(null);
+    let isPlayerTurn = true;
+    let isBotMoving = false;
+    let score = 0;
+    let winStreak = 0;
+    let wins = 0;
+    let draws = 0;
+    let losses = 0;
+
+    const scoreDisplay = document.getElementById('score');
+    const winsDisplay = document.getElementById('wins');
+    const drawsDisplay = document.getElementById('draws');
+    const lossesDisplay = document.getElementById('losses');
+    const cells = document.querySelectorAll('.cell');
+
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    function checkWinner() {
+      for (let combo of winningCombinations) {
+        const [a, b, c] = combo;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          cells[a].classList.add('highlight');
+          cells[b].classList.add('highlight');
+          cells[c].classList.add('highlight');
+          return board[a];
+        }
+      }
+      return null;
+    }
+
+    function botMove() {
+      isBotMoving = true;
+      const availableMoves = board
+        .map((val, index) => val === null ? index : null)
+        .filter(val => val !== null);
+
+      if (availableMoves.length > 0) {
+        setTimeout(() => {
+          const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+          board[randomMove] = BOT;
+          cells[randomMove].innerText = BOT;
+          isBotMoving = false;
+          isPlayerTurn = true;
+          checkGameStatus();
+        }, 500);
+      }
+    }
+
+    function handlePlayerMove(index) {
+      if (!board[index] && isPlayerTurn && !isBotMoving) {
+        board[index] = PLAYER;
+        cells[index].innerText = PLAYER;
+        isPlayerTurn = false;
+        checkGameStatus();
+      }
+    }
+
+    function checkGameStatus() {
+      const winner = checkWinner();
+      if (winner) {
+        setTimeout(() => {
+          if (winner === PLAYER) {
+            alert('You win!');
+            score++;
+            winStreak++;
+            wins++;
+            if (winStreak >= 3) {
+              score++;
+              winStreak = 0;
+              alert('Bonus point for winning 3 times in a row!');
+            }
+          } else {
+            alert('You lost!');
+            score--;
+            winStreak = 0;
+            losses++;
+          }
+
+          updateScoreboard();
+          resetGame();
+        }, 500);
+      } else if (!board.includes(null)) {
+        setTimeout(() => {
+          alert('Draw!');
+          draws++;
+          updateScoreboard();
+          resetGame();
+        }, 500);
+      } else if (!isPlayerTurn) {
+        botMove();
+      }
+    }
+
+    function updateScoreboard() {
+      scoreDisplay.innerText = score;
+      winsDisplay.innerText = wins;
+      drawsDisplay.innerText = draws;
+      lossesDisplay.innerText = losses;
+    }
+
+    function resetGame() {
+      board = Array(9).fill(null);
+      cells.forEach(cell => {
+        cell.innerText = '';
+        cell.classList.remove('highlight');
+      });
+      isPlayerTurn = true;
+      isBotMoving = false;
+    }
+
+    cells.forEach((cell, index) => {
+      cell.addEventListener('click', () => handlePlayerMove(index));
+    });
+  </script>
+
+</body>
+</html>
