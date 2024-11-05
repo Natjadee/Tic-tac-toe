@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,9 +19,10 @@
       display: grid;
       grid-template-columns: repeat(3, 100px);
       grid-template-rows: repeat(3, 100px);
-      gap: 5px;
+      /* gap: 5px; */
       margin-top: 20px;
     }
+
     .cell {
       width: 100px;
       height: 100px;
@@ -28,19 +30,45 @@
       text-align: center;
       line-height: 100px;
       background-color: #f1f1f1;
-      border: 1px solid #333;
       cursor: pointer;
     }
+
+    /* กำหนดเส้น border ให้ดูเหมือน # */
+    .cell {
+      border: none;
+    }
+
+    .cell:nth-child(2),
+    .cell:nth-child(3),
+    .cell:nth-child(5),
+    .cell:nth-child(6),
+    .cell:nth-child(8),
+    .cell:nth-child(9) {
+      border-left: 5px solid #333;
+    }
+
+    .cell:nth-child(4),
+    .cell:nth-child(7),
+    .cell:nth-child(5),
+    .cell:nth-child(6),
+    .cell:nth-child(8),
+    .cell:nth-child(9) {
+      border-top: 5px solid #333;
+    }
+
     .highlight {
       background-color: #4CAF50;
       color: white;
     }
-    #scoreboard, #resultboard {
+
+    #scoreboard,
+    #resultboard {
       text-align: center;
       margin: 20px;
     }
   </style>
 </head>
+
 <body>
 
   <h1 style="text-align: center;">Tic-Tac-Toe Game</h1>
@@ -66,8 +94,8 @@
   </div>
 
   <script>
-    const PLAYER = 'X';
-    const BOT = 'O';
+    const PLAYER = '🙅';
+    const BOT = '🙆‍♂️';
     let board = Array(9).fill(null);
     let isPlayerTurn = true;
     let isBotMoving = false;
@@ -193,4 +221,5 @@
   </script>
 
 </body>
+
 </html>
