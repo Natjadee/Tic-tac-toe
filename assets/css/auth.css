@@ -1,0 +1,8 @@
+.card-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* ให้ card-body ขยายเต็มความสูงของ container */
+    flex-direction: column; /* จัดให้เนื้อหาอยู่ในแนวตั้ง */
+  }
+  

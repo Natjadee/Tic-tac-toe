@@ -1,0 +1,9 @@
+@font-face {
+    font-family: LINESeedSans_Rg;
+    src: url('../webfont/WOFF/LINESeedSansTH_W_Rg.woff');
+}
+
+html,
+body {
+    font-family: LINESeedSans_Rg, sans-serif;
+}
