@@ -36,13 +36,14 @@ function loadScore() {
 }
 // ฟังก์ชันสำหรับการดึงข้อมูลจาก Local Storage เพื่อแสดงรายชื่อผู้เล่นทางด้านขวา
 function displayPlayerStats() {
-    console.log(localStorage.getItem('userScores'));
+    // console.log(localStorage.getItem('userScores'));
     const playersList = document.getElementById('players-list');
     playersList.innerHTML = ''; // เคลียร์รายชื่อเก่า
 
     const storedData = JSON.parse(localStorage.getItem('userScores')) || {};
     const userName = localStorage.getItem('userName'); // ดึงค่า userName จาก LocalStorage
     // เช็คว่ามีข้อมูลผู้เล่นใน storedData หรือไม่
+    console.log(Object.keys(storedData).length);
     if (Object.keys(storedData).length > 0) {
         // แสดงปุ่ม Clear Scores
         $("#btnrmScore").show();
@@ -243,24 +244,38 @@ function resetGame() {
 }
 //----------------------------------------//
 function clearScores() {
-    // ลบข้อมูลคะแนนจาก localStorage
-    localStorage.removeItem('userScores');
+    Swal.fire({
+        title: "Are you sure you want to clear scores?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, clear it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // ลบข้อมูลคะแนนจาก localStorage
+            localStorage.removeItem('userScores');
 
-    // ไม่ต้องรีเซ็ต userName
-    // userName = ''; // ไม่ต้องทำการรีเซ็ตค่า userName
+            // ไม่ต้องรีเซ็ต userName
+            // userName = ''; // ไม่ต้องทำการรีเซ็ตค่า userName
 
-    // รีเซ็ตค่าตัวแปรคะแนนและสถิติ
-    playerScore = 0;
-    wins = 0;
-    draws = 0;
-    losses = 0;
-    winStreak = 0;
+            // รีเซ็ตค่าตัวแปรคะแนนและสถิติ
+            playerScore = 0;
+            wins = 0;
+            draws = 0;
+            losses = 0;
+            winStreak = 0;
+            // รีเฟรชการแสดงผล
+            displayPlayerStats();
+            updateStats();
+            // resetGame();
+            Swal.fire({
+                title: "Cleared!",
+                text: "All scores have been cleared.",
+                icon: "success"
+            });
+        }
+    });
 
-    // แสดงข้อความแจ้งเตือนให้ผู้ใช้ทราบ
-    alert('All scores have been cleared.');
-
-    // รีเฟรชการแสดงผล
-    displayPlayerStats();
-    updateStats();
-    // resetGame();
 }
