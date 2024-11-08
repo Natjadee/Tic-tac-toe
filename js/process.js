@@ -7,6 +7,93 @@ let draws = 0;
 let losses = 0;
 let playerTurn = true; // ตัวแปรสำหรับควบคุมการเลือก
 
+window.onload = function () {
+    // ตรวจสอบว่า userName มีค่าหรือไม่
+    const userName = localStorage.getItem('userName');
+    if (userName) {
+        loadScore();
+    } else {
+        console.log("No username found in localStorage");
+    }
+};
+
+function loadScore() {
+    const storedData = JSON.parse(localStorage.getItem('userScores')) || {};
+    if (storedData[userName]) {
+        const {
+            playerScore: savedScore,
+            wins: savedWins,
+            draws: savedDraws,
+            losses: savedLosses
+        } = storedData[userName];
+        playerScore = savedScore || 0;
+        wins = savedWins || 0;
+        draws = savedDraws || 0;
+        losses = savedLosses || 0;
+        // updateScoreboard();
+    }
+    displayPlayerStats();
+}
+// ฟังก์ชันสำหรับการดึงข้อมูลจาก Local Storage เพื่อแสดงรายชื่อผู้เล่นทางด้านขวา
+function displayPlayerStats() {
+    console.log(localStorage.getItem('userScores'));
+    const playersList = document.getElementById('players-list');
+    playersList.innerHTML = ''; // เคลียร์รายชื่อเก่า
+
+    const storedData = JSON.parse(localStorage.getItem('userScores')) || {};
+    const userName = localStorage.getItem('userName'); // ดึงค่า userName จาก LocalStorage
+    // เช็คว่ามีข้อมูลผู้เล่นใน storedData หรือไม่
+    if (Object.keys(storedData).length > 0) {
+        // แสดงปุ่ม Clear Scores
+        $("#btnrmScore").show();
+    } else {
+        // ซ่อนปุ่ม Clear Scores ถ้าไม่มีข้อมูล
+        $("#btnrmScore").hide();
+    }
+    // จัดเรียงผู้เล่นตามคะแนน (จากมากไปน้อย)
+    const sortedPlayers = Object.entries(storedData).sort((a, b) => b[1].playerScore - a[1].playerScore);
+
+    // แสดงรายชื่อผู้เล่นที่เรียงแล้ว
+    for (const [name, stats] of sortedPlayers) {
+        const playerLink = document.createElement('a');
+        playerLink.href = '#';
+        playerLink.classList.add('list-group-item', 'list-group-item-action');
+
+        // ถ้าชื่อผู้เล่นตรงกับชื่อผู้ใช้งาน ให้เพิ่มคลาส 'highlight' เพื่อไฮไลท์
+        if (name === userName) {
+            playerLink.classList.add('active');
+        }
+
+        playerLink.innerHTML = `
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="username">${name}</h5>
+                <h5 class="scoreuser">Score ${stats.playerScore}</h5>
+            </div>
+            <div class="w-100">
+                Wins: <span class="wins">${stats.wins}</span> |
+                Draws: <span class="draws">${stats.draws}</span> |
+                Losses: <span class="losses">${stats.losses}</span>
+            </div>
+        `;
+
+        playersList.appendChild(playerLink);
+    }
+    $("#btnrmScore").show();
+}
+
+
+function saveScore() {
+    const storedData = JSON.parse(localStorage.getItem('userScores')) || {};
+    storedData[userName] = {
+        playerScore,
+        wins,
+        draws,
+        losses
+    };
+    localStorage.setItem('userScores', JSON.stringify(storedData));
+    displayPlayerStats();
+}
+
 function playerMove(cellIndex) {
     if (!gameActive || !playerTurn || board[cellIndex - 1] !== '') return;
 
@@ -16,9 +103,10 @@ function playerMove(cellIndex) {
     // เรียกใช้ highlightWinningCells โดยระบุผู้ชนะ
     if (checkWinner('X')) {
         updateScore(1);
-        document.getElementById('status').textContent = `Player X wins!`;
+        document.getElementById('status').textContent = `Player wins!`;
         wins++;
         updateStats();
+        saveScore();
         highlightWinningCells(checkWinner('X'), 'X'); // ไฮไลท์ช่องที่ชนะของผู้เล่น
         gameActive = false;
         return;
@@ -27,12 +115,14 @@ function playerMove(cellIndex) {
     if (board.every(cell => cell !== '')) {
         draws++;
         updateStats();
+        saveScore();
         document.getElementById('status').textContent = 'It\'s a draw!';
         gameActive = false;
         return;
     }
 
     playerTurn = false; // เปลี่ยนเป็นรอบของบอท
+    document.getElementById('status').textContent = `Bot's turn`; // อัปเดตสถานะเป็นตาของบอท
     setTimeout(botMove, 500); // ดีเลย์การเล่นของบอท 0.5 วินาที
 }
 
@@ -49,19 +139,22 @@ function botMove() {
         document.getElementById('status').textContent = `Bot wins!`;
         losses++;
         updateStats();
+        saveScore();
         highlightWinningCells(checkWinner('O'), 'O'); // ไฮไลท์ช่องที่ชนะของบอท
         gameActive = false;
         return;
     } else if (board.every(cell => cell !== '')) {
         draws++;
         updateStats();
+        saveScore();
         document.getElementById('status').textContent = 'It\'s a draw!';
         gameActive = false;
     } else {
         playerTurn = true; // กลับไปให้ผู้เล่นเลือก
-        document.getElementById('status').textContent = `Player X's turn`;
+        document.getElementById('status').textContent = `Player's turn`; // อัปเดตสถานะเป็นตาของผู้เล่น
     }
 }
+
 
 function checkWinner(player) {
     const winPatterns = [
@@ -90,8 +183,24 @@ function updateScore(change) {
         if (winStreak === 3) {
             playerScore++; // โบนัสสำหรับการชนะติดต่อกัน 3 ครั้ง
             winStreak = 0; // รีเซ็ตสตรีค
-            alert("Bonussssssssssss");
+            Swal.fire({
+                title: "คุณชนะ 3 ครั้งติดต่อกัน เอาโบนัสไปเลยอีก 1 คะแนน",
+                width: 600,
+                padding: "3em",
+                color: "#716add",
+                confirmButtonText: "รับโบนัส 🎉",
+                confirmButtonColor: "#716add",
+                imageUrl: "assets/img/illustrations/bonus.gif",
+                imageHeight: 300,
+                backdrop: `
+                  rgba(0,0,123,0.4)
+                  url("assets/img/illustrations/pixeltrue-giveaway-1.svg")
+                  right
+                  no-repeat
+                `
+            });
         }
+        saveScore();
     } else {
         winStreak = 0;
         playerScore--;
@@ -121,7 +230,7 @@ function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     gameActive = true;
     playerTurn = true;
-    document.getElementById('status').textContent = `Player X's turn`;
+    document.getElementById('status').textContent = `Player's turn`;
 
     for (let i = 1; i <= 9; i++) {
         const cell = document.getElementById(`cell${i}`);
@@ -129,4 +238,29 @@ function resetGame() {
         cell.classList.remove('highlight-player'); // ลบไฮไลท์ของผู้เล่น
         cell.classList.remove('highlight-bot'); // ลบไฮไลท์ของบอท
     }
+
+
+}
+//----------------------------------------//
+function clearScores() {
+    // ลบข้อมูลคะแนนจาก localStorage
+    localStorage.removeItem('userScores');
+
+    // ไม่ต้องรีเซ็ต userName
+    // userName = ''; // ไม่ต้องทำการรีเซ็ตค่า userName
+
+    // รีเซ็ตค่าตัวแปรคะแนนและสถิติ
+    playerScore = 0;
+    wins = 0;
+    draws = 0;
+    losses = 0;
+    winStreak = 0;
+
+    // แสดงข้อความแจ้งเตือนให้ผู้ใช้ทราบ
+    alert('All scores have been cleared.');
+
+    // รีเฟรชการแสดงผล
+    displayPlayerStats();
+    updateStats();
+    // resetGame();
 }

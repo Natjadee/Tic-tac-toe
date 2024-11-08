@@ -7,6 +7,7 @@ window.onload = function () {
         userName = localStorage.getItem('userName'); // ดึง userName จาก Local Storage
         $("#welcome").html(`Welcome back, ${userName}`);
         $("#userName").html(userName);
+        loadScore();
     }
 };
 //------------------------------------------------------------//

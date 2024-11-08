@@ -118,8 +118,7 @@
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="container ">
                             <div class="row justify-content-end">
-                                <div class="col-md-6 col-sm-12 text-center">
-
+                                <div class="col-md-5 col-sm-12 text-center">
                                     <div class="container text-center mt-5">
                                         <h1 class="fw-bolder">Tic-tac-toe</h1>
                                         <div id="game-board" class="container">
@@ -148,8 +147,8 @@
                                 </div>
                                 <div class="col-md-4 col-sm-12">
                                     <h2 class="fw-bolder">Player Stats</h2>
-                                    <div class="list-group">
-                                        <a href="#" class="list-group-item list-group-item-action">
+                                    <div id="players-list" class="list-group">
+                                        <!-- <a href="#" class="list-group-item list-group-item-action">
                                             <div class="d-flex w-100 justify-content-between">
                                                 <h5 id="username">natjadee</h5>
                                                 <h5 id="scoreuser">Score 50</h5>
@@ -159,19 +158,12 @@
                                                 Draws: <span id="draws">0</span> |
                                                 Losses: <span id="losses">0</span>
                                             </div>
-                                        </a>
-                                        <a href="#" class="list-group-item list-group-item-action">
-                                            <div class="d-flex w-100 justify-content-between">
-                                                <h5 id="username">natjadee</h5>
-                                                <h5 id="scoreuser">Score 50</h5>
-                                            </div>
-                                            <div class="w-100">
-                                                Wins: <span id="wins">0</span> |
-                                                Draws: <span id="draws">0</span> |
-                                                Losses: <span id="losses">0</span>
-                                            </div>
-                                        </a>
+                                        </a> -->
                                     </div>
+                                    <button id="btnrmScore" style="display: none;" onclick="clearScores();" type="button"
+                                        class=" mt-5 btn btn-danger me-2">
+                                        <span class="tf-icons bx bx-trash bx-18px me-2"></span> Clear Scores
+                                    </button>
                                 </div>
                             </div>
                         </div>
