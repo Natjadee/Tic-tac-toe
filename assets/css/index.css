@@ -1,105 +1,21 @@
-body {
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  margin: 0;
-}
-
-.hidden {
-  display: none;
-}
-
-.center {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.board {
-  display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
-  margin-top: 20px;
-}
-
-.cell {
-  width: 100px;
-  height: 100px;
-  font-size: 2em;
-  text-align: center;
-  line-height: 100px;
-  background-color: #f1f1f1;
-  cursor: pointer;
-}
-
-/* กำหนดเส้น border ให้ดูเหมือน # */
-.cell:nth-child(2),
-.cell:nth-child(3),
-.cell:nth-child(5),
-.cell:nth-child(6),
-.cell:nth-child(8),
-.cell:nth-child(9) {
-  border-left: 5px solid #333;
-}
-
-.cell:nth-child(4),
-.cell:nth-child(7),
-.cell:nth-child(5),
-.cell:nth-child(6),
-.cell:nth-child(8),
-.cell:nth-child(9) {
-  border-top: 5px solid #333;
+.game-cell {
+    font-size: 2rem;
+    cursor: pointer;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #8d8989;
 }
 
 .highlight {
-  background-color: #4CAF50;
-  color: white;
+    background-color: lightgreen;
+    /* สีทองสำหรับไฮไลท์ช่องที่ชนะ */
+}
+.highlight-player {
+    background-color: lightgreen; /* สีสำหรับผู้เล่น */
 }
 
-.highlightPlayer {
-  background-color: yellow;
-  /* หรือสีที่คุณต้องการ */
-  font-weight: bold;
-}
-
-#game-container {
-  display: flex;
-  display: none;
-  /* ซ่อนหน้าเกมไว้ก่อน */
-}
-
-#scoreboard,
-#resultboard {
-  text-align: center;
-  margin: 20px;
-}
-
-#player-stats {
-  margin-left: 20px;
-  padding: 20px;
-  border-left: 2px solid #333;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.player {
-  margin-bottom: 15px;
-}
-
-.player-name {
-  font-weight: bold;
-}
-
-.clear-scores-button {
-  padding: 10px 20px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-top: 10px;
-}
-
-.clear-scores-button:hover {
-  background-color: #d32f2f;
+.highlight-bot {
+    background-color: lightcoral; /* สีสำหรับบอท */
 }
